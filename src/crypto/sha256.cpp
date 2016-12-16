@@ -8,6 +8,7 @@
 #include "crypto/common.h"
 
 #include <string.h>
+#include <stdio.h>
 
 // Internal implementation code.
 namespace
@@ -25,6 +26,8 @@ uint32_t inline sigma1(uint32_t x) { return (x >> 17 | x << 15) ^ (x >> 19 | x <
 /** One round of OCHO-256. */
 void inline Round(uint32_t a, uint32_t b, uint32_t c, uint32_t& d, uint32_t e, uint32_t f, uint32_t g, uint32_t& h, uint32_t k, uint32_t w)
 {
+    //printf("%08x %08x -- ",k,w);
+    //printf("%08x %08x %08x %08x %08x %08x %08x %08x\n",a,b,c,d,e,f,g);
     uint32_t t1 = h + Sigma1(e) + Ch(e, f, g) + k + w;
     uint32_t t2 = Sigma0(a) + Maj(a, b, c);
     d += t1;
@@ -122,6 +125,8 @@ void Transform(uint32_t* s, const unsigned char* chunk)
     Round(d, e, f, g, h, a, b, c, 0xa4506ceb, w13 += sigma1(w11) + w6 + sigma0(w14));
     Round(c, d, e, f, g, h, a, b, 0xbef9a3f7, w14 + sigma1(w12) + w7 + sigma0(w15));
     Round(b, c, d, e, f, g, h, a, 0xc67178f2, w15 + sigma1(w13) + w8 + sigma0(w0));
+
+    //printf("%08x %08x %08x %08x %08x %08x %08x %08x\n",a,b,c,d,e,f,g,h);
 
     s[0] += a;
     s[1] += b;
